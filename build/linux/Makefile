@@ -1,0 +1,54 @@
+# define the C compiler to use
+CC = gcc
+CP = cp -f
+
+#directories
+LDIR = lib
+SDIR = src
+ODIR = obj
+VDIR = $(LDIR)/libvoltronic
+VLDIR = $(LDIR)/libvoltronic/$(LDIR)
+VSDIR = $(LDIR)/libvoltronic/$(SDIR)
+VODIR = $(VDIR)/$(ODIR)
+
+# define any compile-time flags
+CFLAGS = -std=c99 -Werror -Wall -Wextra -Wpedantic -Wmissing-prototypes -Wshadow -O3 -flto -fomit-frame-pointer
+
+# add includes
+CFLAGS += -I$(VDIR)/include -I$(LDIR)/fcgi2/include -I$(VLDIR)/libserialport -I$(VLDIR)/hidapi/hidapi -I$(VLDIR)/libusb/libusb
+
+# shared libraries
+SHARED_LIBS = 
+
+# Object files shared by all directives
+SHARED_OBJS = $(VODIR)/voltronic_crc.o $(VODIR)/voltronic_dev.o $(ODIR)/main.o $(ODIR)/voltronic_fcgi.o $(LDIR)/fcgi2/libfcgi/.libs/libfcgi.a
+
+# Directives
+default:
+	@echo "Different compile options exist using different underlying hardware and libraries to communicate with the hardware"
+	@echo ""
+	@echo "  libserialport - Serial port using libserialport"
+	@echo "  hidapi-hidraw - USB support in Linux using HIDApi utilizing HIDRaw"
+	@echo ""
+	@echo "Usage: make libserialport; make hidapi; etc."
+
+libserialport: $(SHARED_OBJS) $(ODIR)/voltronic_fcgi_serial.o $(VODIR)/voltronic_dev_serial_libserialport.o $(VLDIR)/libserialport/.libs/libserialport.a
+	$(CC) -o $@ $^ $(CFLAGS) $(SHARED_LIBS)
+	$(CP) $@ voltronic_fcgi_libserialport
+	$(RM) $@
+
+hidapi-hidraw: $(SHARED_OBJS) $(ODIR)/voltronic_fcgi_usb.o $(VODIR)/voltronic_dev_usb_hidapi.o $(VLDIR)/hidapi/linux/.libs/libhidapi-hidraw.a
+	$(CC) -o $@ $^ $(CFLAGS) $(SHARED_LIBS) -ludev
+	$(CP) $@ voltronic_fcgi_hidapi_hidraw
+	$(RM) $@
+
+$(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+$(VODIR)/%.o: $(VSDIR)/%.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
+
+.PHONY: clean
+
+clean:
+	$(RM) $(ODIR)/*.o $(VODIR)/*.o *~ voltronic_fcgi_libserialport voltronic_fcgi_hidapi voltronic_fcgi_hidapi_hidraw voltronic_fcgi_hidapi_libusb $(INCDIR)/*~ 
