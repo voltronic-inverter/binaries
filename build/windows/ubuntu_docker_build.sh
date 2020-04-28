@@ -17,7 +17,7 @@ apt-get install -y make gcc autoconf automake libtool pkg-config mingw-w64
 
 # Start the build loop
 LOOP_COUNT=0
-while [ $LOOP_COUNT -le 2 ]; do
+while [ $LOOP_COUNT -le 1 ]; do
   LOOP_COUNT=$(( $LOOP_COUNT + 1 ))
 
   rm -rf '/build' 1>/dev/null 2>/dev/null

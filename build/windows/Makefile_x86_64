@@ -45,4 +45,4 @@ $(VODIR)/%.o: $(VSDIR)/%.c $(DEPS)
 .PHONY: clean
 
 clean:
-	$(RM) $(ODIR)/*.o $(VODIR)/*.o *~ libserialport.exe hidapi.exe $(INCDIR)/*~ 
+	$(RM) $(ODIR)/*.o $(VODIR)/*.o *~ *.exe $(INCDIR)/*~ 

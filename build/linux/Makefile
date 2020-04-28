@@ -51,4 +51,4 @@ $(VODIR)/%.o: $(VSDIR)/%.c $(DEPS)
 .PHONY: clean
 
 clean:
-	$(RM) $(ODIR)/*.o $(VODIR)/*.o *~ voltronic_fcgi_libserialport voltronic_fcgi_hidapi voltronic_fcgi_hidapi_hidraw voltronic_fcgi_hidapi_libusb $(INCDIR)/*~ 
+	$(RM) $(ODIR)/*.o $(VODIR)/*.o *~ voltronic_fcgi_libserialport voltronic_fcgi_hidapi_hidraw  $(INCDIR)/*~ 

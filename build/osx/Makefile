@@ -1,6 +1,5 @@
 # define the C compiler to use
-
-CC = i686-w64-mingw32-gcc
+CC = gcc
 CP = cp -f
 
 #directories
@@ -18,6 +17,9 @@ CFLAGS = -std=c99 -Werror -Wall -Wextra -Wpedantic -Wmissing-prototypes -Wshadow
 # add includes
 CFLAGS += -I$(VDIR)/include -I$(LDIR)/fcgi2/include -I$(VLDIR)/libserialport -I$(VLDIR)/hidapi/hidapi -I$(VLDIR)/libusb/libusb
 
+# shared libraries
+SHARED_LIBS = -framework IOKit -framework Foundation
+
 # Object files shared by all directives
 SHARED_OBJS = $(VODIR)/voltronic_crc.o $(VODIR)/voltronic_dev.o $(ODIR)/main.o $(ODIR)/voltronic_fcgi.o $(LDIR)/fcgi2/libfcgi/.libs/libfcgi.a
 
@@ -26,15 +28,19 @@ default:
 	@echo "Different compile options exist using different underlying hardware and libraries to communicate with the hardware"
 	@echo ""
 	@echo "  libserialport - Serial port using libserialport"
-	@echo "  hidapi - USB support"
+	@echo "  hidapi - USB support using HIDApi in Mac, Windows, FreeBSD"
 	@echo ""
 	@echo "Usage: make libserialport; make hidapi; etc."
 
 libserialport: $(SHARED_OBJS) $(ODIR)/voltronic_fcgi_serial.o $(VODIR)/voltronic_dev_serial_libserialport.o $(VLDIR)/libserialport/.libs/libserialport.a
-	$(CC) -o $@ $^ $(CFLAGS) -lkernel32 -lhid -lsetupapi -lwsock32 -lws2_32
+	$(CC) -o $@ $^ $(CFLAGS) $(SHARED_LIBS)
+	$(CP) $@ voltronic_fcgi_libserialport
+	$(RM) $@
 
-hidapi: $(SHARED_OBJS) $(ODIR)/voltronic_fcgi_usb.o $(VODIR)/voltronic_dev_usb_hidapi.o $(VLDIR)/hidapi/windows/.libs/libhidapi.a 
-	$(CC) -o $@ $^ $(CFLAGS) $(SHARED_LIBS) -lkernel32 -lhid -lwsock32 -lsetupapi -lws2_32
+hidapi: $(SHARED_OBJS) $(ODIR)/voltronic_fcgi_usb.o $(VODIR)/voltronic_dev_usb_hidapi.o $(VLDIR)/hidapi/mac/.libs/libhidapi.a 
+	$(CC) -o $@ $^ $(CFLAGS) $(SHARED_LIBS)
+	$(CP) $@ voltronic_fcgi_hidapi
+	$(RM) $@
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
 	$(CC) -c -o $@ $< $(CFLAGS)
@@ -45,4 +51,4 @@ $(VODIR)/%.o: $(VSDIR)/%.c $(DEPS)
 .PHONY: clean
 
 clean:
-	$(RM) $(ODIR)/*.o $(VODIR)/*.o *~ *.exe  $(INCDIR)/*~ 
+	$(RM) $(ODIR)/*.o $(VODIR)/*.o *~ voltronic_fcgi_libserialport voltronic_fcgi_hidapi $(INCDIR)/*~ 
