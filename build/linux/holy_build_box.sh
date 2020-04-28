@@ -26,7 +26,7 @@ fi
 
 # Install udev; We will not be linking to it statically
 yum install -y libudev libudev-devel
-if [ $BUILD_STATE -eq 0 ]; then
+if [ $BUILD_STATE -eq 1 ]; then
   ln -s /usr/lib/pkgconfig/libudev.pc /hbb_exe/lib/pkgconfig/
 else
   ln -s /usr/lib64/pkgconfig/libudev.pc /hbb_exe/lib/pkgconfig/
@@ -53,11 +53,7 @@ cd /build/fcgi-interface/lib/libvoltronic/lib/libusb/
 ./configure
 make
 make install
-if [ $BUILD_STATE -eq 0 ]; then
-  ln -s /usr/local/lib/pkgconfig/libusb-1.0.pc /hbb_exe/lib/pkgconfig/
-else
-  ln -s /usr/local/lib/pkgconfig/libusb-1.0.pc /hbb_exe/lib/pkgconfig/
-fi
+ln -s /usr/local/lib/pkgconfig/libusb-1.0.pc /hbb_exe/lib/pkgconfig/
 
 # Build HID API
 cd /build/fcgi-interface/lib/libvoltronic/lib/hidapi
@@ -77,14 +73,14 @@ rm -f Makefile
 curl -L -o '/build/fcgi-interface/Makefile' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/linux/Makefile'
 
 make clean && make libserialport
-if [ $BUILD_STATE -eq 0 ]; then
+if [ $BUILD_STATE -eq 1 ]; then
   mv -f '/build/fcgi-interface/voltronic_fcgi_libserialport' '/io/voltronic_fcgi_libserialport_i686'
 else
   mv -f '/build/fcgi-interface/voltronic_fcgi_libserialport' '/io/voltronic_fcgi_libserialport_x86-64'
 fi
 
 make clean && make hidapi-hidraw
-if [ $BUILD_STATE -eq 0 ]; then
+if [ $BUILD_STATE -eq 1 ]; then
   mv -f '/build/fcgi-interface/voltronic_fcgi_hidapi_hidraw' '/io/voltronic_fcgi_hidapi_hidraw_i686'
 else
   mv -f '/build/fcgi-interface/voltronic_fcgi_hidapi_hidraw' '/io/voltronic_fcgi_hidapi_hidraw_x86-64'
