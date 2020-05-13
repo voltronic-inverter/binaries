@@ -12,8 +12,8 @@ curl -L -o '/src/repo_fetcher.sh' 'https://raw.githubusercontent.com/voltronic-i
 chmod 775 '/src/repo_fetcher.sh'
 /src/repo_fetcher.sh
 
-VERSION=`/src/version_parser.sh`
-mkdir "/io/${VERSION}/windows"
+VERSION_PATH=`/src/version_parser.sh`
+mkdir "${VERSION_PATH}/windows"
 
 echo "Starting build"
 
@@ -78,18 +78,18 @@ while [ $LOOP_COUNT -le 1 ]; do
 
   make clean && make libserialport
   if [ $LOOP_COUNT -eq 1 ]; then
-    mkdir "/io/${VERSION}/windows/i686"
-    mv -f '/build/fcgi-interface/libserialport.exe' "/io/${VERSION}/windows/i686/voltronic_fcgi_serial.exe"
+    mkdir "${VERSION_PATH}/windows/i686"
+    mv -f '/build/fcgi-interface/libserialport.exe' "${VERSION_PATH}/windows/i686/voltronic_fcgi_serial.exe"
   else
-    mkdir "/io/${VERSION}/windows/amd64"
-    mv -f '/build/fcgi-interface/libserialport.exe' "/io/${VERSION}/windows/amd64/voltronic_fcgi_serial.exe"
+    mkdir "${VERSION_PATH}/windows/amd64"
+    mv -f '/build/fcgi-interface/libserialport.exe' "${VERSION_PATH}/windows/amd64/voltronic_fcgi_serial.exe"
   fi
 
   make clean && make hidapi
   if [ $LOOP_COUNT -eq 1 ]; then
-    mv -f '/build/fcgi-interface/hidapi.exe' "/io/${VERSION}/windows/i686/voltronic_fcgi_usb.exe"
+    mv -f '/build/fcgi-interface/hidapi.exe' "${VERSION_PATH}/windows/i686/voltronic_fcgi_usb.exe"
   else
-    mv -f '/build/fcgi-interface/hidapi.exe' "/io/${VERSION}/windows/amd64/voltronic_fcgi_usb.exe"
+    mv -f '/build/fcgi-interface/hidapi.exe' "${VERSION_PATH}/windows/amd64/voltronic_fcgi_usb.exe"
   fi
 done
 
