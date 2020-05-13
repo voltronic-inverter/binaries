@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-VERSION=`cat '/build/fcgi-interface/include/version.h' | grep 'VOLTRONIC_FCGI_VERSION' | grep -v '#ifndef' | cut -d '"' -f 2 2>/dev/null`
+VERSION=`cat '/build/fcgi-interface/include/version.h' | grep 'VOLTRONIC_FCGI_VERSION' | grep -v '#ifndef' | cut -d '"' -f 2`
 if [[ $? -eq 0 ]]; then
-  mkdir "/io/${VERSION} 1>/dev/null 2>/dev/null"
+  mkdir "/io/${VERSION}"
   if [[ $? -eq 0 ]]; then
     echo "/io/${VERSION}"
     exit 0
