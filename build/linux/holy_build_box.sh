@@ -2,6 +2,8 @@
 
 # Fetch all the repos
 mkdir '/src'
+curl -L -o '/src/version_parser.sh' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/version_parser.sh'
+chmod 775 '/src/version_parser.sh'
 curl -L -o '/src/repo_fetcher.sh' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/repo_fetcher.sh'
 chmod 775 '/src/repo_fetcher.sh'
 /src/repo_fetcher.sh
@@ -72,16 +74,18 @@ cd /build/fcgi-interface
 rm -f Makefile
 curl -L -o '/build/fcgi-interface/Makefile' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/linux/Makefile'
 
+VERSION=`/src/version_parser.sh`
+
 make clean && make libserialport
 if [ $BUILD_STATE -eq 1 ]; then
-  mv -f '/build/fcgi-interface/voltronic_fcgi_libserialport' '/io/voltronic_fcgi_libserialport_i686'
+  mv -f '/build/fcgi-interface/voltronic_fcgi_libserialport' '/io/${VERSION}/linux/i686/voltronic_fcgi_serial'
 else
-  mv -f '/build/fcgi-interface/voltronic_fcgi_libserialport' '/io/voltronic_fcgi_libserialport_x86-64'
+  mv -f '/build/fcgi-interface/voltronic_fcgi_libserialport' '/io/${VERSION}/linux/amd64/voltronic_fcgi_serial'
 fi
 
 make clean && make hidapi-hidraw
 if [ $BUILD_STATE -eq 1 ]; then
-  mv -f '/build/fcgi-interface/voltronic_fcgi_hidapi_hidraw' '/io/voltronic_fcgi_hidapi_hidraw_i686'
+  mv -f '/build/fcgi-interface/voltronic_fcgi_hidapi_hidraw' '/io/${VERSION}/linux/i686/voltronic_fcgi_usb'
 else
-  mv -f '/build/fcgi-interface/voltronic_fcgi_hidapi_hidraw' '/io/voltronic_fcgi_hidapi_hidraw_x86-64'
+  mv -f '/build/fcgi-interface/voltronic_fcgi_hidapi_hidraw' '/io/${VERSION}/linux/amd64/voltronic_fcgi_usb'
 fi
