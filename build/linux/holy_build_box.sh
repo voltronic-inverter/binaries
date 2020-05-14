@@ -11,7 +11,7 @@ fi
 ls '/io/src/shared_file_fetcher.sh' 1>/dev/null 2>/dev/null
 if [[ $? -ne 0 ]]; then
   mkdir '/io/src'
-  curl -L -o '/io/src/shared_file_fetcher.sh' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/shared_file_fetcher.sh'
+  curl -sSL -o '/io/src/shared_file_fetcher.sh' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/shared_file_fetcher.sh'
   chmod 775 '/io/src/shared_file_fetcher.sh'
 fi
 
@@ -94,7 +94,7 @@ cd /build/fcgi-interface/lib/libvoltronic/lib/hidapi
 ./configure
 
 # Required because of possible missing defines for HID
-curl -L -o /build/fcgi-interface/lib/libvoltronic/lib/hidapi/hid_extra.h 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/linux/hid_extra.h'
+curl -sSL -o '/build/fcgi-interface/lib/libvoltronic/lib/hidapi/hid_extra.h' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/linux/hid_extra.h'
 sed '/#include "hidapi.h"/a #include "hid_extra.h"' /build/fcgi-interface/lib/libvoltronic/lib/hidapi/linux/hid.c > /tmp/hid.c
 mv -f '/tmp/hid.c' '/build/fcgi-interface/lib/libvoltronic/lib/hidapi/linux/hid.c'
 
@@ -103,7 +103,7 @@ make
 # Build fcgi-interface
 cd /build/fcgi-interface
 rm -f Makefile
-curl -L -o '/build/fcgi-interface/Makefile' "https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/linux/Makefile_x86"
+curl -sSL -o '/build/fcgi-interface/Makefile' "https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/linux/Makefile_x86"
 
 make clean && make libserialport
 mv -f '/build/fcgi-interface/voltronic_fcgi_libserialport' "/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}/voltronic_fcgi_serial"

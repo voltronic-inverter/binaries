@@ -14,7 +14,7 @@ apt-get install -y unzip
 ls '/io/src/shared_file_fetcher.sh' 1>/dev/null 2>/dev/null
 if [[ $? -ne 0 ]]; then
   mkdir '/io/src'
-  curl -L -o '/io/src/shared_file_fetcher.sh' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/shared_file_fetcher.sh'
+  curl -sSL -o '/io/src/shared_file_fetcher.sh' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/shared_file_fetcher.sh'
   chmod 775 '/io/src/shared_file_fetcher.sh'
 fi
 
@@ -48,7 +48,7 @@ apt-get install -y make gcc autoconf automake libtool pkg-config gcc-arm-linux-g
 
 cp /etc/apt/sources.list /etc/apt/sources.list.old
 rm /etc/apt/sources.list
-curl -L -o '/etc/apt/sources.list' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/linux/sources-arm-ubuntu.list'
+curl -sSL -o '/etc/apt/sources.list' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/linux/sources-arm-ubuntu.list'
 
 cd /tmp
 apt-get update
@@ -59,7 +59,7 @@ rm -rf /tmp/libudev-dev_175-0ubuntu9.10_armhf.deb
 rm /etc/apt/sources.list
 cp /etc/apt/sources.list.old /etc/apt/sources.list
 
-curl -L -o '/usr/lib/arm-linux-gnueabihf/libudev.so.0.13.0' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/linux/arm-linux-gnueabihf-libudev.so.0.13.0'
+curl -sSL -o '/usr/lib/arm-linux-gnueabihf/libudev.so.0.13.0' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/linux/arm-linux-gnueabihf-libudev.so.0.13.0'
 rm '/usr/lib/arm-linux-gnueabihf/libudev.so'
 ln -s '/usr/lib/arm-linux-gnueabihf/libudev.so.0.13.0' '/usr/lib/arm-linux-gnueabihf/libudev.so'
 ln -s '/usr/lib/arm-linux-gnueabihf/pkgconfig/libudev.pc' '/usr/lib/x86_64-linux-gnu/pkgconfig/libudev.pc'
@@ -87,7 +87,7 @@ make
 # Build fcgi-interface
 cd '/build/fcgi-interface'
 rm -f Makefile
-curl -L -o '/build/fcgi-interface/Makefile' "https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/linux/Makefile_${TARGET_ARCHITECTURE}"
+curl -sSL -o '/build/fcgi-interface/Makefile' "https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/linux/Makefile_${TARGET_ARCHITECTURE}"
 
 make clean && make libserialport
 mv -f '/build/fcgi-interface/voltronic_fcgi_libserialport' "/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}/voltronic_fcgi_serial"

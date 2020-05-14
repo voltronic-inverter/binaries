@@ -15,7 +15,7 @@ apt-get install -y unzip
 ls '/io/src/shared_file_fetcher.sh' 1>/dev/null 2>/dev/null
 if [[ $? -ne 0 ]]; then
   mkdir '/io/src'
-  curl -L -o '/io/src/shared_file_fetcher.sh' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/shared_file_fetcher.sh'
+  curl -sSL -o '/io/src/shared_file_fetcher.sh' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/shared_file_fetcher.sh'
   chmod 775 '/io/src/shared_file_fetcher.sh'
   /io/src/shared_file_fetcher.sh
   if [[ $? -ne 0 ]]; then
@@ -96,7 +96,7 @@ while [ $LOOP_COUNT -le 1 ]; do
   # Build fcgi-interface
   cd '/build/fcgi-interface'
   rm -f Makefile
-  curl -L -o '/build/fcgi-interface/Makefile' "https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/windows/Makefile_${TARGET_ARCHITECTURE}"
+  curl -sSL -o '/build/fcgi-interface/Makefile' "https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/windows/Makefile_${TARGET_ARCHITECTURE}"
 
   make clean && make libserialport
   mv -f '/build/fcgi-interface/libserialport.exe' "/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}/voltronic_fcgi_serial.exe"
