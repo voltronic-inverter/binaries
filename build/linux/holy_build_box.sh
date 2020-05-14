@@ -1,15 +1,34 @@
 #!/usr/bin/env bash
 
-# Fetch all the repos
-mkdir '/src'
-curl -L -o '/src/version_parser.sh' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/version_parser.sh'
-chmod 775 '/src/version_parser.sh'
-curl -L -o '/src/repo_fetcher.sh' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/repo_fetcher.sh'
-chmod 775 '/src/repo_fetcher.sh'
-/src/repo_fetcher.sh
+if [[ -d '/io/' ]]; then
+  echo "Output directory /io exists"
+else
+  echo "Output directory /io doest not exist"
+  exit 1
+fi
 
-VERSION_PATH=`/src/version_parser.sh`
-mkdir "${VERSION_PATH}/linux/"
+# Fetch all the repos
+ls '/io/src/shared_file_fetcher.sh' 1>/dev/null 2>/dev/null
+if [[ $? -ne 0 ]]; then
+  mkdir '/io/src'
+  curl -L -o '/io/src/shared_file_fetcher.sh' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/shared_file_fetcher.sh'
+  chmod 775 '/io/src/shared_file_fetcher.sh'
+fi
+
+/io/src/shared_file_fetcher.sh
+if [[ $? -ne 0 ]]; then
+  echo "Could not successfully fetch shared files"
+  exit 1
+fi
+
+# Compilation properties
+TARGET_PLATFORM="linux"
+TARGET_ARCHITECTURE="<unknown>"
+VERSION=`/io/src/version_parser.sh`
+if [[ $? -ne 0 ]]; then
+  echo "Could not determine voltronic-fcgi version"
+  exit 1
+fi
 
 # Determine target platform
 BUILD_STATE=0
@@ -21,13 +40,22 @@ else
 fi
 
 if [ $BUILD_STATE -eq 1 ]; then
-  echo 'Building i686 Linux binaries'
+  TARGET_ARCHITECTURE="i686"
 elif [ $BUILD_STATE -eq 2 ]; then
-  echo 'Building x86-64 Linux binaries'
+  TARGET_ARCHITECTURE="amd64"
 else
   echo 'Unknown build state'
   exit 1
 fi
+
+mkdir -p "/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}"
+ls '/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}' 1>/dev/null 2>/dev/null
+if [[ $? -ne 0 ]]; then
+  echo "Could not create output path"
+  exit 1
+fi
+
+echo "Building ${TARGET_PLATFORM} ${TARGET_ARCHITECTURE} binaries"
 
 # Install udev; We will not be linking to it statically
 yum install -y libudev libudev-devel
@@ -75,20 +103,10 @@ make
 # Build fcgi-interface
 cd /build/fcgi-interface
 rm -f Makefile
-curl -L -o '/build/fcgi-interface/Makefile' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/linux/Makefile'
+curl -L -o '/build/fcgi-interface/Makefile' "https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/linux/Makefile_x86"
 
 make clean && make libserialport
-if [ $BUILD_STATE -eq 1 ]; then
-  mkdir "${VERSION_PATH}/linux/i686"
-  mv -f '/build/fcgi-interface/voltronic_fcgi_libserialport' "${VERSION_PATH}/linux/i686/voltronic_fcgi_serial"
-else
-  mkdir "${VERSION_PATH}/linux/amd64"
-  mv -f '/build/fcgi-interface/voltronic_fcgi_libserialport' "${VERSION_PATH}/linux/amd64/voltronic_fcgi_serial"
-fi
+mv -f '/build/fcgi-interface/voltronic_fcgi_libserialport' "/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}/voltronic_fcgi_serial"
 
 make clean && make hidapi-hidraw
-if [ $BUILD_STATE -eq 1 ]; then
-  mv -f '/build/fcgi-interface/voltronic_fcgi_hidapi_hidraw' "${VERSION_PATH}/linux/i686/voltronic_fcgi_usb"
-else
-  mv -f '/build/fcgi-interface/voltronic_fcgi_hidapi_hidraw' "${VERSION_PATH}/linux/amd64/voltronic_fcgi_usb"
-fi
+mv -f '/build/fcgi-interface/voltronic_fcgi_hidapi_hidraw' "/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}/voltronic_fcgi_usb"

@@ -1,21 +1,44 @@
 #!/usr/bin/env bash
 
+if [[ -d '/io/' ]]; then
+  echo "Output directory /io exists"
+else
+  echo "Output directory /io doest not exist"
+  exit 1
+fi
+
 # Install dependencies required to fetch the repos
 TZ='Etc/UTC' DEBIAN_FRONTEND='noninteractive' apt-get install -y tzdata
 apt-get install -y unzip
 
-# Get repo fetching script & fetch the repos
-mkdir '/src/'
-curl -L -o '/src/version_parser.sh' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/version_parser.sh'
-chmod 775 '/src/version_parser.sh'
-curl -L -o '/src/repo_fetcher.sh' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/repo_fetcher.sh'
-chmod 775 '/src/repo_fetcher.sh'
-/src/repo_fetcher.sh
+# Fetch all the repos
+ls '/io/src/shared_file_fetcher.sh' 1>/dev/null 2>/dev/null
+if [[ $? -ne 0 ]]; then
+  mkdir '/io/src'
+  curl -L -o '/io/src/shared_file_fetcher.sh' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/shared_file_fetcher.sh'
+  chmod 775 '/io/src/shared_file_fetcher.sh'
+  /io/src/shared_file_fetcher.sh
+  if [[ $? -ne 0 ]]; then
+    echo "Could not successfully fetch shared files"
+    exit 1
+  fi
+fi
 
-VERSION_PATH=`/src/version_parser.sh`
-mkdir "${VERSION_PATH}/windows"
+# Compilation properties
+TARGET_PLATFORM="windows"
+TARGET_ARCHITECTURE=""
+VERSION=`/io/src/version_parser.sh`
+if [[ $? -ne 0 ]]; then
+  echo "Could not determine voltronic-fcgi version"
+  exit 1
+fi
 
-echo "Starting build"
+mkdir -p "/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}"
+ls '/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}' 1>/dev/null 2>/dev/null
+if [[ $? -ne 0 ]]; then
+  echo "Could not create output path"
+  exit 1
+fi
 
 # Install build dependencies
 apt-get install -y make gcc autoconf automake libtool pkg-config mingw-w64
@@ -28,14 +51,17 @@ while [ $LOOP_COUNT -le 1 ]; do
   rm -rf '/build' 1>/dev/null 2>/dev/null
 
   if [ $LOOP_COUNT -eq 1 ]; then
+    TARGET_ARCHITECTURE="i686"
     echo "Building i686 binaries"
   elif [ $LOOP_COUNT -eq 2 ]; then
-    echo "Building x86-64 binaries"
+    TARGET_ARCHITECTURE="amd64"
   else
     echo "Unsupported build mode"
     exit 1
   fi
-  /src/repo_fetcher.sh
+  /io/src/shared_file_fetcher.sh
+
+  echo "Building ${TARGET_PLATFORM} ${TARGET_ARCHITECTURE} binaries"
 
   # Build libserialport
   cd '/build/fcgi-interface/lib/libvoltronic/lib/libserialport'
@@ -70,27 +96,14 @@ while [ $LOOP_COUNT -le 1 ]; do
   # Build fcgi-interface
   cd '/build/fcgi-interface'
   rm -f Makefile
-  if [ $LOOP_COUNT -eq 1 ]; then
-    curl -L -o '/build/fcgi-interface/Makefile' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/windows/Makefile_x86'
-  else
-    curl -L -o '/build/fcgi-interface/Makefile' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/windows/Makefile_x86_64'
-  fi
+  curl -L -o '/build/fcgi-interface/Makefile' "https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/windows/Makefile_${TARGET_ARCHITECTURE}"
 
   make clean && make libserialport
-  if [ $LOOP_COUNT -eq 1 ]; then
-    mkdir "${VERSION_PATH}/windows/i686"
-    mv -f '/build/fcgi-interface/libserialport.exe' "${VERSION_PATH}/windows/i686/voltronic_fcgi_serial.exe"
-  else
-    mkdir "${VERSION_PATH}/windows/amd64"
-    mv -f '/build/fcgi-interface/libserialport.exe' "${VERSION_PATH}/windows/amd64/voltronic_fcgi_serial.exe"
-  fi
+  mv -f '/build/fcgi-interface/libserialport.exe' "/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}/voltronic_fcgi_serial.exe"
 
   make clean && make hidapi
-  if [ $LOOP_COUNT -eq 1 ]; then
-    mv -f '/build/fcgi-interface/hidapi.exe' "${VERSION_PATH}/windows/i686/voltronic_fcgi_usb.exe"
-  else
-    mv -f '/build/fcgi-interface/hidapi.exe' "${VERSION_PATH}/windows/amd64/voltronic_fcgi_usb.exe"
-  fi
+  mv -f '/build/fcgi-interface/hidapi.exe' "/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}/voltronic_fcgi_usb.exe"
+
 done
 
 echo "Build complete"
