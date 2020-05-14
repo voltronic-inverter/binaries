@@ -8,8 +8,8 @@ else
 fi
 
 # Install dependencies required to fetch the repos
-TZ='Etc/UTC' DEBIAN_FRONTEND='noninteractive' apt-get install -y tzdata
-apt-get install -y unzip
+TZ='Etc/UTC' DEBIAN_FRONTEND='noninteractive' apt-get install -y tzdata 1>/dev/null 2>/dev/null
+apt-get install -y unzip 1>/dev/null 2>/dev/null
 
 # Fetch all the repos
 ls '/io/src/shared_file_fetcher.sh' 1>/dev/null 2>/dev/null
@@ -34,7 +34,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # Install build dependencies
-apt-get install -y make gcc autoconf automake libtool pkg-config mingw-w64
+apt-get install -y make gcc autoconf automake libtool pkg-config mingw-w64 1>/dev/null 2>/dev/null
 
 # Start the build loop
 LOOP_COUNT=0

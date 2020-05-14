@@ -7,8 +7,9 @@ else
   exit 1
 fi
 
-TZ='Etc/UTC' DEBIAN_FRONTEND='noninteractive' apt-get install -y tzdata
-apt-get install -y unzip
+echo "Installing required packages"
+TZ='Etc/UTC' DEBIAN_FRONTEND='noninteractive' apt-get install -y tzdata 1>/dev/null 2>/dev/null
+apt-get install -y unzip 1>/dev/null 2>/dev/null
 
 # Fetch all the repos
 ls '/io/src/shared_file_fetcher.sh' 1>/dev/null 2>/dev/null
@@ -45,7 +46,7 @@ fi
 
 echo "Building ${TARGET_PLATFORM} ${TARGET_ARCHITECTURE} v${VERSION} binaries"
 
-apt-get install -y make gcc autoconf automake libtool pkg-config gcc-arm-linux-gnueabi binutils-arm-linux-gnueabi libusb-1.0-0-dev
+apt-get install -y make gcc autoconf automake libtool pkg-config gcc-arm-linux-gnueabi binutils-arm-linux-gnueabi libusb-1.0-0-dev 1>/dev/null 2>/dev/null
 
 # Install ARM udev binary
 
@@ -54,9 +55,9 @@ rm /etc/apt/sources.list
 curl -sSL -o '/etc/apt/sources.list' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/linux/sources-arm-ubuntu.list'
 
 cd /tmp
-apt-get update
-apt-get download libudev-dev:armhf
-dpkg --force-all -i libudev-dev_175-0ubuntu9.10_armhf.deb
+apt-get update 1>/dev/null 2>/dev/null
+apt-get download libudev-dev:armhf 1>/dev/null 2>/dev/null
+dpkg --force-all -i libudev-dev_175-0ubuntu9.10_armhf.deb 1>/dev/null 2>/dev/null
 rm -rf /tmp/libudev-dev_175-0ubuntu9.10_armhf.deb
 
 rm /etc/apt/sources.list

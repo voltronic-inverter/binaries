@@ -61,7 +61,7 @@ fi
 echo "Building ${TARGET_PLATFORM} ${TARGET_ARCHITECTURE} v${VERSION} binaries"
 
 # Install udev; We will not be linking to it statically
-yum install -y libudev libudev-devel
+yum install -y libudev libudev-devel 1>/dev/null 2>/dev/null
 if [ $BUILD_STATE -eq 1 ]; then
   ln -s /usr/lib/pkgconfig/libudev.pc /hbb_exe/lib/pkgconfig/
 else

@@ -14,7 +14,7 @@ docker run -t -i --rm -v `pwd`:/io phusion/holy-build-box-64:latest bash -c "cur
 
 ### arm-gnueabi
 ```sh
-docker run -t -i --rm -v `pwd`:/io ubuntu:precise bash -c "apt-get clean && apt-get update && apt-get install -y curl && curl -sSL 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/linux/ubuntu_arm_build.sh' | bash"
+docker run -t -i --rm -v `pwd`:/io ubuntu:precise bash -c "apt-get clean && apt-get update >/dev/null && apt-get install -y curl >/dev/null && curl -sSL 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/linux/ubuntu_arm_build.sh' | bash"
 ```
 
 [Look at it go](https://youtu.be/mew8AtH5wvU?t=14)
