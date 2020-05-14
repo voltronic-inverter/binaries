@@ -25,30 +25,30 @@ SHARED_OBJS = $(VODIR)/voltronic_crc.o $(VODIR)/voltronic_dev.o $(ODIR)/utils.o 
 
 # Directives
 default:
-    @echo "Different compile options exist using different underlying hardware and libraries to communicate with the hardware"
-    @echo ""
-    @echo "  libserialport - Serial port using libserialport"
-    @echo "  hidapi-hidraw - USB support in Linux using HIDApi utilizing HIDRaw"
-    @echo ""
-    @echo "Usage: make libserialport; make hidapi; etc."
+	@echo "Different compile options exist using different underlying hardware and libraries to communicate with the hardware"
+	@echo ""
+	@echo "  libserialport - Serial port using libserialport"
+	@echo "  hidapi-hidraw - USB support in Linux using HIDApi utilizing HIDRaw"
+	@echo ""
+	@echo "Usage: make libserialport; make hidapi; etc."
 
 libserialport: $(SHARED_OBJS) $(ODIR)/voltronic_fcgi_serial.o $(VODIR)/voltronic_dev_serial_libserialport.o $(VLDIR)/libserialport/.libs/libserialport.a
-    $(CC) -o $@ $^ $(CFLAGS) $(SHARED_LIBS)
-    $(CP) $@ voltronic_fcgi_libserialport
-    $(RM) $@
+	$(CC) -o $@ $^ $(CFLAGS) $(SHARED_LIBS)
+	$(CP) $@ voltronic_fcgi_libserialport
+	$(RM) $@
 
 hidapi-hidraw: $(SHARED_OBJS) $(ODIR)/voltronic_fcgi_usb.o $(VODIR)/voltronic_dev_usb_hidapi.o $(VLDIR)/hidapi/linux/.libs/libhidapi-hidraw.a
-    $(CC) -o $@ $^ $(CFLAGS) $(SHARED_LIBS) -L/usr/lib/arm-linux-gnueabihf -ludev
-    $(CP) $@ voltronic_fcgi_hidapi_hidraw
-    $(RM) $@
+	$(CC) -o $@ $^ $(CFLAGS) $(SHARED_LIBS) -L'/usr/lib/arm-linux-gnueabihf' -ludev
+	$(CP) $@ voltronic_fcgi_hidapi_hidraw
+	$(RM) $@
 
 $(ODIR)/%.o: $(SDIR)/%.c $(DEPS)
-    $(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 $(VODIR)/%.o: $(VSDIR)/%.c $(DEPS)
-    $(CC) -c -o $@ $< $(CFLAGS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
 .PHONY: clean
 
 clean:
-    $(RM) $(ODIR)/*.o $(VODIR)/*.o *~ voltronic_fcgi_libserialport voltronic_fcgi_hidapi_hidraw  $(INCDIR)/*~ 
+	$(RM) $(ODIR)/*.o $(VODIR)/*.o *~ voltronic_fcgi_libserialport voltronic_fcgi_hidapi_hidraw  $(INCDIR)/*~ 
