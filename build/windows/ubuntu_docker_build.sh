@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo "Starting windows voltronic-fcgi build"
+
 if [[ -d '/io/' ]]; then
   echo "Output directory /io exists"
 else
@@ -35,6 +37,7 @@ if [[ $? -ne 0 ]]; then
 fi
 
 # Install build dependencies
+echo "Installing build tools"
 apt-get install -y make gcc autoconf automake libtool pkg-config mingw-w64 1>/dev/null 2>/dev/null
 
 # Start the build loop

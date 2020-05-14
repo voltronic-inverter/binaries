@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+echo "Starting linux-x86 voltronic-fcgi build"
 if [[ -d '/io/' ]]; then
   echo "Output directory /io exists"
 else
@@ -60,6 +61,7 @@ fi
 
 echo "Building ${TARGET_PLATFORM} ${TARGET_ARCHITECTURE} v${VERSION} binaries"
 
+echo "Installing build dependencies"
 # Install udev; We will not be linking to it statically
 yum install -y libudev libudev-devel 1>/dev/null 2>/dev/null
 if [ $BUILD_STATE -eq 1 ]; then

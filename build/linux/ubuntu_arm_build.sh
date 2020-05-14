@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+echo "Starting linux-arm voltronic-fcgi build"
+
 if [[ -d '/io/' ]]; then
   echo "Output directory /io exists"
 else
@@ -46,6 +48,7 @@ fi
 
 echo "Building ${TARGET_PLATFORM} ${TARGET_ARCHITECTURE} v${VERSION} binaries"
 
+echo "Installing build tools"
 apt-get install -y make gcc autoconf automake libtool pkg-config gcc-arm-linux-gnueabi binutils-arm-linux-gnueabi libusb-1.0-0-dev 1>/dev/null 2>/dev/null
 
 # Install ARM udev binary
