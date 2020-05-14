@@ -17,11 +17,12 @@ if [[ $? -ne 0 ]]; then
   mkdir '/io/src'
   curl -sSL -o '/io/src/shared_file_fetcher.sh' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/shared_file_fetcher.sh'
   chmod 775 '/io/src/shared_file_fetcher.sh'
-  /io/src/shared_file_fetcher.sh
-  if [[ $? -ne 0 ]]; then
-    echo "Could not successfully fetch shared files"
-    exit 1
-  fi
+fi
+
+/io/src/shared_file_fetcher.sh 1>/dev/null 2>/dev/null
+if [[ $? -ne 0 ]]; then
+  echo "Could not successfully fetch shared files"
+  exit 1
 fi
 
 # Compilation properties
