@@ -36,7 +36,7 @@ fetch_repo() {
 find "/io/src/version_parser.sh" -maxdepth 1 -type f
 if [ $? -ne 0 ]; then
   echo "Fetching version parser"
-  curl -o '/io/src/version_parser.sh' -L 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/version_parser.sh'
+  curl -sSL -o '/io/src/version_parser.sh' 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/version_parser.sh'
   chmod 775 '/io/src/version_parser.sh'
 fi
 
