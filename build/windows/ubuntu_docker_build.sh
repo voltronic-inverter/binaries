@@ -34,7 +34,10 @@ if [[ $? -ne 0 ]]; then
 fi
 
 mkdir -p "/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}"
-ls '/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}' 1>/dev/null 2>/dev/null
+chmod 775 "/io/${VERSION}"
+chmod 775 "/io/${VERSION}/${TARGET_PLATFORM}"
+chmod 775 "/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}"
+ls "/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}" 1>/dev/null 2>/dev/null
 if [[ $? -ne 0 ]]; then
   echo "Could not create output path"
   exit 1
