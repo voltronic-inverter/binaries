@@ -12,15 +12,15 @@ fetch_repo() {
   DESTINATION="${2}"
   REPO_NAME="${3}"
 
-  find "/io/src/${OUTPUT_NAME}.zip" -maxdepth 1 -type f
+  find "/io/src/${OUTPUT_NAME}.zip" -maxdepth 1 -type f 1>/dev/null 2>/dev/null
   if [[ $? -ne 0 ]]; then
     echo "Fetching ${OUTPUT_NAME} repo"
-    curl -o "/io/src/${OUTPUT_NAME}.zip" -L "${REPO_NAME}"
+    curl -sSL -o "/io/src/${OUTPUT_NAME}.zip" "${REPO_NAME}"
     chmod 664 "/io/src/${OUTPUT_NAME}.zip"
   fi
 
   echo "Decompressing ${OUTPUT_NAME} repo"
-  unzip "/io/src/${OUTPUT_NAME}.zip" -d '/tmp/unzip_temp/'
+  unzip "/io/src/${OUTPUT_NAME}.zip" -d '/tmp/unzip_temp/' 1>/dev/null
   if [[ $? -ne 0 ]]; then
     echo "${OUTPUT_NAME} repo could not be decompressed successfully"
     exit 1
@@ -37,7 +37,7 @@ find "/io/src/version_parser.sh" -maxdepth 1 -type f
 if [ $? -ne 0 ]; then
   echo "Fetching version parser"
   curl -o '/io/src/version_parser.sh' -L 'https://raw.githubusercontent.com/voltronic-inverter/binaries/master/build/version_parser.sh'
-  chmod 775 '/src/version_parser.sh'
+  chmod 775 '/io/src/version_parser.sh'
 fi
 
 # Get fcgi-interface
