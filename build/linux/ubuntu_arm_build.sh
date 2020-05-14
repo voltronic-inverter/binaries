@@ -43,7 +43,7 @@ if [[ $? -ne 0 ]]; then
   exit 1
 fi
 
-echo "Building ${TARGET_PLATFORM} ${TARGET_ARCHITECTURE} binaries"
+echo "Building ${TARGET_PLATFORM} ${TARGET_ARCHITECTURE} v${VERSION} binaries"
 
 apt-get install -y make gcc autoconf automake libtool pkg-config gcc-arm-linux-gnueabi binutils-arm-linux-gnueabi libusb-1.0-0-dev
 

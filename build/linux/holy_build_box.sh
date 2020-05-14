@@ -58,7 +58,7 @@ if [[ $? -ne 0 ]]; then
   exit 1
 fi
 
-echo "Building ${TARGET_PLATFORM} ${TARGET_ARCHITECTURE} binaries"
+echo "Building ${TARGET_PLATFORM} ${TARGET_ARCHITECTURE} v${VERSION} binaries"
 
 # Install udev; We will not be linking to it statically
 yum install -y libudev libudev-devel

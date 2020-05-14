@@ -33,16 +33,6 @@ if [[ $? -ne 0 ]]; then
   exit 1
 fi
 
-mkdir -p "/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}"
-chmod 775 "/io/${VERSION}"
-chmod 775 "/io/${VERSION}/${TARGET_PLATFORM}"
-chmod 775 "/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}"
-ls "/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}" 1>/dev/null 2>/dev/null
-if [[ $? -ne 0 ]]; then
-  echo "Could not create output path"
-  exit 1
-fi
-
 # Install build dependencies
 apt-get install -y make gcc autoconf automake libtool pkg-config mingw-w64
 
@@ -55,16 +45,26 @@ while [ $LOOP_COUNT -le 1 ]; do
 
   if [ $LOOP_COUNT -eq 1 ]; then
     TARGET_ARCHITECTURE="i686"
-    echo "Building i686 binaries"
   elif [ $LOOP_COUNT -eq 2 ]; then
     TARGET_ARCHITECTURE="amd64"
   else
     echo "Unsupported build mode"
     exit 1
   fi
-  /io/src/shared_file_fetcher.sh
 
-  echo "Building ${TARGET_PLATFORM} ${TARGET_ARCHITECTURE} binaries"
+  mkdir -p "/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}"
+  chmod 775 "/io/${VERSION}"
+  chmod 775 "/io/${VERSION}/${TARGET_PLATFORM}"
+  chmod 775 "/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}"
+  ls "/io/${VERSION}/${TARGET_PLATFORM}/${TARGET_ARCHITECTURE}" 1>/dev/null 2>/dev/null
+  if [[ $? -ne 0 ]]; then
+    echo "Could not create output path"
+    exit 1
+  fi
+
+  echo "Building ${TARGET_PLATFORM} ${TARGET_ARCHITECTURE} v${VERSION} binaries"
+
+  /io/src/shared_file_fetcher.sh
 
   # Build libserialport
   cd '/build/fcgi-interface/lib/libvoltronic/lib/libserialport'
